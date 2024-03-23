@@ -60,8 +60,11 @@ class Book(models.Model):
         ordering = ['title', 'author']
 
     def display_genre(self):
-        """Creates a string for the Genre. This is required to display genre in Admin."""
-        return ', '.join([genre.name for genre in self.genre.all()[:3]])
+        """Create a string for the Genre. This is required to display genre in Admin."""
+        return ', '.join(genre.name for genre in self.genre.all()[:3])
+
+    display_genre.short_description = 'Genre'
+
 
     display_genre.short_description = 'Genre'
 
