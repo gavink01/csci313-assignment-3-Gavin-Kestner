@@ -49,6 +49,18 @@
             {% endif %}
           </ul>
 
+          {% if user.is_staff %}
+<hr>
+<ul class="sidebar-nav">
+<li>Staff</li>
+   <li><a href="{% url 'all-borrowed' %}">All borrowed</a></li>
+{% if perms.catalog.add_author %}
+   <li><a href="{% url 'author-create' %}">Create author</a></li>
+{% endif %}
+</ul>
+{% endif %}
+
+
           {% endblock %}
         </div>
         <div class="col-sm-10">
