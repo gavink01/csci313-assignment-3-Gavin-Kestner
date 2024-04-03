@@ -38,7 +38,7 @@ class AuthorAdmin(admin.ModelAdmin):
 
     fields = ['first_name', 'last_name', ('date_of_birth', 'date_of_death')]
     
-    inlines = [BooksInLine]
+    inlines = [BooksInline]
 
 # Register the admin class with the associated model
 admin.site.register(Author, AuthorAdmin)
