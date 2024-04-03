@@ -16,7 +16,7 @@
   {% load static %}
   <link rel="stylesheet" href="{% static '/css/styles.css' %}" />
 </head>
-<body>
+<body style="background-image:url('{% static "background.jpg"%}')">
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-2 mysidebar" style="border-right: solid; border-color: black;">
@@ -66,9 +66,11 @@
       </div>
       <div class="col main">
         <!-- Content -->
-        <div class="blue-box center-box" style="border-color: black;">
-          {% block content %}
-          {% endblock %}
+        <div>
+          <div class="blue-box center-box">
+            {% block content %}
+            {% endblock %}
+          </div>
         </div>
       </div>
     </div>
