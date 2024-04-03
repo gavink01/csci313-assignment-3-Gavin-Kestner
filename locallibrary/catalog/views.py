@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import Book, Author, BookInstance, Genre
+from .models import Book, Author, BookInstance, Genre, Language
 from django.views import generic
 import datetime
 from django.contrib.auth.decorators import login_required, permission_required
@@ -52,12 +52,33 @@ class BookListView(generic.ListView):
     model = Book
     paginate_by = 4
     
-class BookDetailView(generic.DetailView):
-    model = Book
-    
 class AuthorListView(generic.ListView):
     model = Author
+    paginate_by = 4    
+    
+class GenreListView(generic.ListView):
+    model = Genre
     paginate_by = 4
+    
+class LanguageListView(generic.ListView):
+    model = Language
+    paginate_by = 4
+    
+class BookInstanceListView(generic.ListView):
+    model = BookInstance
+    paginate_by = 20
+    
+class BookDetailView(generic.DetailView):
+    model = Book
+   
+class BookInstanceDetailView(generic.DetailView):
+    model = BookInstance
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        bookinstance = self.object
+        context['books'] = bookinstance
+        return context   
 
 class AuthorDetailView(generic.DetailView):
     model = Author
@@ -66,6 +87,24 @@ class AuthorDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         author = self.object
         context['books'] = author.book_set.all() 
+        return context
+    
+class GenreDetailView(generic.DetailView):
+    model = Genre
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        genre = self.object
+        context['books'] = genre.book_set.all() 
+        return context
+    
+class LanguageDetailView(generic.DetailView):
+    model = Language
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        language = self.object
+        context['books'] = language.book_set.all() 
         return context
     
 
@@ -82,7 +121,7 @@ class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
             .order_by('due_back')
         )
 
-class LoanedBooksListView(LoginRequiredMixin,generic.ListView):
+class LoanedBooksAllListView(LoginRequiredMixin,generic.ListView):
     """Generic class-based view listing books on loan."""
     model = BookInstance
     template_name = 'catalog/bookinstance_borrowed_list.html'
@@ -174,4 +213,79 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
         except Exception as e:
             return HttpResponseRedirect(
                 reverse("book-delete", kwargs={"pk": self.object.pk})
+            )
+
+class BookInstanceCreate(PermissionRequiredMixin, CreateView):
+    model = BookInstance
+    fields = ['book', 'imprint', 'due_back', 'borrower', 'status']
+    permission_required = 'catalog.add_bookinstance'
+
+class BookInstanceUpdate(PermissionRequiredMixin, UpdateView):
+    model = BookInstance
+    # Not recommended (potential security issue if more fields added)
+    fields = ['book', 'imprint', 'due_back', 'borrower', 'status']
+    permission_required = 'catalog.change_bookinstance'
+
+class BookInstanceDelete(PermissionRequiredMixin, DeleteView):
+    model = BookInstance
+    success_url = reverse_lazy('bookinstances')
+    permission_required = 'catalog.delete_bookinstance'
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+            return HttpResponseRedirect(self.success_url)
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("bookinstance-delete", kwargs={"pk": self.object.pk})
+            )
+            
+class GenreCreate(PermissionRequiredMixin, CreateView):
+    model = Genre
+    fields = ['name', ]
+    permission_required = 'catalog.add_genre'
+
+class GenreUpdate(PermissionRequiredMixin, UpdateView):
+    model = Genre
+    # Not recommended (potential security issue if more fields added)
+    fields = '__all__'
+    permission_required = 'catalog.change_genre'
+
+class GenreDelete(PermissionRequiredMixin, DeleteView):
+    model = Genre
+    success_url = reverse_lazy('genres')
+    permission_required = 'catalog.delete_genre'
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+            return HttpResponseRedirect(self.success_url)
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("genre-delete", kwargs={"pk": self.object.pk})
+            )
+
+class LanguageCreate(PermissionRequiredMixin, CreateView):
+    model = Language
+    fields = ['name']
+    permission_required = 'catalog.add_language'
+
+class LanguageUpdate(PermissionRequiredMixin, UpdateView):
+    model = Language
+    # Not recommended (potential security issue if more fields added)
+    fields = '__all__'
+    permission_required = 'catalog.change_language'
+
+class LanguageDelete(PermissionRequiredMixin, DeleteView):
+    model = Language
+    success_url = reverse_lazy('languages')
+    permission_required = 'catalog.delete_language'
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+            return HttpResponseRedirect(self.success_url)
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("language-delete", kwargs={"pk": self.object.pk})
             )
