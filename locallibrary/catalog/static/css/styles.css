@@ -1,4 +1,13 @@
 
+#logout-form {
+  display: inline;
+}
+
+#logout-form button {
+  padding: 0;
+  margin: 0;
+}
+
 .sidebar-nav {
   margin-top: 20px;
   padding: 10;

@@ -26,7 +26,7 @@ def index(request):
 
     # Available books (status = 'a')
     num_instances_available = BookInstance.objects.filter(status__exact='a').count()
-    num_books_with_the = Book.objects.filter(title__icontains='the').count()
+    num_books_with_the = Book.objects.filter(title__icontains='It').count()
     
     # The 'all()' is implied by default.
     num_authors = Author.objects.count()
@@ -50,19 +50,19 @@ def index(request):
 
 class BookListView(generic.ListView):
     model = Book
-    paginate_by = 4
+    paginate_by = 10
     
 class AuthorListView(generic.ListView):
     model = Author
-    paginate_by = 4    
+    paginate_by = 10   
     
 class GenreListView(generic.ListView):
     model = Genre
-    paginate_by = 4
+    paginate_by = 10
     
 class LanguageListView(generic.ListView):
     model = Language
-    paginate_by = 4
+    paginate_by = 10
     
 class BookInstanceListView(generic.ListView):
     model = BookInstance
